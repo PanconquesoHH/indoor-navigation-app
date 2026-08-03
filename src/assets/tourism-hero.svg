@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c4a6e"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
+    <linearGradient id="mountain1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="mountain2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#334155"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="sun" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="500" fill="url(#sky)"/>
+  <circle cx="650" cy="90" r="55" fill="url(#sun)" opacity="0.9"/>
+  <circle cx="650" cy="90" r="70" fill="#fbbf24" opacity="0.15"/>
+  <!-- Nubes -->
+  <ellipse cx="180" cy="110" rx="70" ry="28" fill="white" opacity="0.25"/>
+  <ellipse cx="230" cy="100" rx="50" ry="22" fill="white" opacity="0.2"/>
+  <ellipse cx="420" cy="80" rx="60" ry="24" fill="white" opacity="0.18"/>
+  <!-- Monta�as lejanas -->
+  <path d="M0 320 L160 180 L320 300 L480 160 L640 280 L800 200 L800 500 L0 500Z" fill="url(#mountain1)" opacity="0.7"/>
+  <path d="M0 380 L200 240 L380 340 L560 220 L800 300 L800 500 L0 500Z" fill="url(#mountain2)" opacity="0.85"/>
+  <!-- Colina verde -->
+  <path d="M0 420 Q200 360 400 400 T800 380 L800 500 L0 500Z" fill="#065f46" opacity="0.6"/>
+  <path d="M0 440 Q250 400 500 430 T800 410 L800 500 L0 500Z" fill="#047857" opacity="0.5"/>
+  <!-- Globo terr�queo -->
+  <circle cx="400" cy="260" r="72" fill="#0f172a" opacity="0.35"/>
+  <circle cx="400" cy="260" r="68" fill="#1e40af" stroke="#38bdf8" stroke-width="3"/>
+  <ellipse cx="400" cy="260" rx="68" ry="22" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <ellipse cx="400" cy="260" rx="22" ry="68" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.6"/>
+  <path d="M332 260 Q400 220 468 260 Q400 300 332 260Z" fill="#38bdf8" opacity="0.25"/>
+  <path d="M332 260 Q400 300 468 260" stroke="#38bdf8" stroke-width="1.5" fill="none" opacity="0.5"/>
+  <!-- Br�jula -->
+  <circle cx="580" cy="340" r="48" fill="#0f172a" opacity="0.4"/>
+  <circle cx="580" cy="340" r="44" fill="rgba(15,23,42,0.8)" stroke="#38bdf8" stroke-width="2"/>
+  <polygon points="580,304 590,348 580,338 570,348" fill="#ef4444"/>
+  <polygon points="580,376 590,332 580,342 570,332" fill="#94a3b8"/>
+  <circle cx="580" cy="340" r="6" fill="#f8fafc"/>
+  <!-- Maleta -->
+  <rect x="220" y="330" width="70" height="52" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+  <rect x="245" y="318" width="20" height="14" rx="4" fill="none" stroke="#38bdf8" stroke-width="2"/>
+  <line x1="235" y1="350" x2="275" y2="350" stroke="#38bdf8" stroke-width="2" opacity="0.5"/>
+  <!-- Avi�n -->
+  <g transform="translate(120, 180) rotate(-15)">
+    <ellipse cx="0" cy="0" rx="28" ry="8" fill="#f8fafc" opacity="0.9"/>
+    <polygon points="-20,-4 -20,4 20,0" fill="#e2e8f0"/>
+    <polygon points="0,-18 8,0 0,18" fill="#cbd5e1"/>
+  </g>
+  <!-- Pin de mapa -->
+  <g transform="translate(680, 420)">
+    <path d="M0,-36 C-16,-36 -28,-24 -28,-10 C-28,8 0,32 0,32 C0,32 28,8 28,-10 C28,-24 16,-36 0,-36Z" fill="#ef4444" stroke="#fca5a5" stroke-width="1.5"/>
+    <circle cx="0" cy="-12" r="10" fill="#fef2f2"/>
+  </g>
+</svg>

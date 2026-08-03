@@ -14,11 +14,10 @@ export default function GpsLocationController({
   enabled,
   onGpsUpdate,
   onGpsError,
-  // Coordenadas “centro” del edificio (placeholder). Ideal: reemplazar por coordenadas reales.
-  buildingCenterLat = -19.0,
-  buildingCenterLng = -65.0,
-  // Umbral aproximado (en metros) para considerar que estás dentro.
-  insideThresholdMeters = 80,
+  // Coordenadas reales aproximadas de la Carrera de Turismo - USFX en Sucre, Bolivia
+  buildingCenterLat = -19.050278,
+  buildingCenterLng = -65.260556,
+  insideThresholdMeters = 150,
 }) {
   useEffect(() => {
     if (!enabled) return;
@@ -40,18 +39,7 @@ export default function GpsLocationController({
       return R * c;
     };
 
-    // “floor/entrada” por zona (placeholder)
-    const inferFloor = ({ lat, lng }) => {
-      // Ejemplo: si estás más “al norte” -> PB; si más “al sur” -> Piso 1, etc.
-      // Esto NO es preciso sin calibración.
-      const dLat = lat - buildingCenterLat;
-
-      if (dLat > 0.0004) return { floor: 'PB', entryName: 'Ingreso Principal' };
-      if (dLat > 0.0000) return { floor: '1', entryName: 'Vestíbulo' };
-      if (dLat > -0.0004) return { floor: '2', entryName: 'Escalera Derecha (PB)' };
-      return { floor: '3', entryName: 'Escalera Izquierda (PB)' };
-    };
-
+    let firstPosition = null;
     let watchId = null;
 
     watchId = navigator.geolocation.watchPosition(
@@ -61,26 +49,73 @@ export default function GpsLocationController({
         const acc = pos.coords.accuracy;
 
         const dist = haversineMeters(lat, lng, buildingCenterLat, buildingCenterLng);
-        const inside = dist <= insideThresholdMeters && acc <= 200; // umbral adicional por precisión
+        // Si está a menos de 300 metros, mapeo absoluto. De lo contrario, mapeo relativo para demo.
+        const isNearBuilding = dist <= 300;
 
-        if (!inside) return;
+        let internalX, internalY;
+        let floor = 'PB';
+        let entryName = '';
 
-        const inferred = inferFloor({ lat, lng });
+        if (isNearBuilding) {
+          // Bounding Box para la Carrera de Turismo (aprox 120m de ancho x 60m de alto)
+          const latMin = -19.0507;
+          const latMax = -19.0498;
+          const lngMin = -65.2611;
+          const lngMax = -65.2600;
 
-        // Convertimos a coordenadas internas del SVG mediante mapeo “aproximado”
-        // usando el nodo más representativo de cada piso.
-        // Puedes ajustar esto a coordenadas reales (por ejemplo, ubicar 1-2 anclas por piso).
+          // Porcentaje de posición en el bounding box [0, 1]
+          const pctX = Math.max(0, Math.min(1, (lng - lngMin) / (lngMax - lngMin)));
+          const pctY = Math.max(0, Math.min(1, 1 - (lat - latMin) / (latMax - latMin)));
+
+          // Mapeo lineal a las dimensiones internas del mapa (1020 x 480)
+          internalX = 80 + pctX * (940 - 80);
+          internalY = 50 + pctY * (430 - 50);
+
+          // Inferir planta aproximada por latitud
+          if (pctY > 0.6) {
+            floor = 'PB';
+            entryName = 'Ingreso Principal';
+          } else if (pctY > 0.4) {
+            floor = '1';
+            entryName = 'Primer Piso';
+          } else if (pctY > 0.2) {
+            floor = '2';
+            entryName = 'Segundo Piso';
+          } else {
+            floor = '3';
+            entryName = 'Tercer Piso';
+          }
+        } else {
+          // Modo Demo (Mapeo relativo al primer punto capturado)
+          if (!firstPosition) {
+            firstPosition = { lat, lng };
+          }
+
+          const deltaLat = lat - firstPosition.lat;
+          const deltaLng = lng - firstPosition.lng;
+
+          // Grados a metros aproximados
+          const metersX = deltaLng * 111320 * Math.cos(toRad(lat));
+          const metersY = deltaLat * 111000;
+
+          // Escalamiento (1m de movimiento físico = 10 píxeles de movimiento en el mapa)
+          // Partimos del centro del mapa (510, 240)
+          internalX = Math.max(80, Math.min(940, 510 + metersX * 10));
+          internalY = Math.max(50, Math.min(430, 240 - metersY * 10)); // Y invertido en SVG
+          
+          floor = 'PB';
+          entryName = 'GPS Relativo (Modo Demo)';
+        }
+
         onGpsUpdate?.({
           lat,
           lng,
           accuracy: acc,
-          floor: inferred.floor,
-          entryName: inferred.entryName,
-          // Posición interna aproximada (se usará para mover el marcador en el plano)
-          // Mantener un punto fijo por piso para que el marcador no “salte” erráticamente.
-          // (Se puede mejorar con IMU/pasos o calibración real.)
-          internalX: null,
-          internalY: null,
+          floor,
+          entryName,
+          internalX,
+          internalY,
+          isRelative: !isNearBuilding
         });
       },
       (err) => {
@@ -89,7 +124,7 @@ export default function GpsLocationController({
       {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 10000,
+        timeout: 15000,
       }
     );
 

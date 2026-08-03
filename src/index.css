@@ -406,6 +406,73 @@ body.light-theme .room-polygon {
 }
 
 /* ==========================================================================
+   RADAR GPS EN CABECERA & ESTADO DE CONEXIÓN
+   ========================================================================== */
+
+/* Subtítulo del encabezado que muestra el estado de conexión GPS */
+.gps-status-subtitle {
+  font-size: 10px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.gps-status-subtitle::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Punto de estado activo (verde brillante) */
+.gps-status-subtitle.gps-status-active {
+  color: var(--brand-success);
+}
+
+.gps-status-subtitle.gps-status-active::before {
+  background: var(--brand-success);
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+}
+
+/* Botón radar compacto en la cabecera */
+.gps-radar-btn {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.gps-radar-btn .gps-radar-icon {
+  color: var(--text-secondary);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Animación del radar cuando el GPS está activo */
+.gps-radar-btn.gps-radar-active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+}
+
+.gps-radar-btn.gps-radar-active .gps-radar-icon {
+  color: var(--brand-success);
+  animation: radar-spin 3s linear infinite;
+}
+
+@keyframes radar-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
    BUSCADOR (SEARCH PANEL)
    ========================================================================== */
 
@@ -1140,3 +1207,63 @@ body.light-theme .route-directions-list::before {
     padding: 16px;
   }
 }
+
+/* ==========================================================================
+   PANEL DE TRANSICIÓN DE ESCALERAS
+   ========================================================================== */
+
+.stairs-transition-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 140px; /* Sobre la bottom sheet */
+  transform: translateX(-50%);
+  z-index: 25;
+  background: var(--bg-glass);
+  border: 1px solid var(--brand-primary);
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 32px rgba(14, 165, 233, 0.35);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  animation: slide-in-bottom 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slide-in-bottom {
+  from {
+    transform: translate(-50%, 20px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+.stairs-panel-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--brand-primary);
+  letter-spacing: 0.5px;
+}
+
+.stairs-panel-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.stairs-action-btn {
+  padding: 0 16px;
+  height: 38px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

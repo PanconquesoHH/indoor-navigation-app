@@ -1,6 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, Minus, Maximize2, Compass } from 'lucide-react';
+import { Plus, Minus, Maximize2 } from 'lucide-react';
 import { rooms, graphNodes } from '../data/buildingData';
+
+// Dimensiones internas del plano SVG
+const MAP_WIDTH = 1020;
+const MAP_HEIGHT = 480;
+
+// Breakpoint para considerar el dispositivo como móvil
+const MOBILE_BREAKPOINT = 768;
+
+// Zoom óptimo para móviles (auto-escalado inteligente)
+const MOBILE_ZOOM = 1.8;
 
 export default function MapViewer({ 
   activeFloor, 
@@ -15,23 +25,83 @@ export default function MapViewer({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
+  // Estado de dispositivo móvil y tamaño real de la pantalla/contenedor
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < MOBILE_BREAKPOINT);
+  const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
+
   const containerRef = useRef(null);
 
   // Filtrar habitaciones y nodos en el piso actual
   const currentRooms = rooms.filter(room => room.floor === activeFloor);
   const userIsOnCurrentFloor = userLocation && userLocation.floor === activeFloor;
 
+  // Detectar móvil y medir el tamaño real de la pantalla/contenedor
+  useEffect(() => {
+    const handleResize = () => {
+      const container = containerRef.current;
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+      setContainerSize({
+        width: container ? container.clientWidth : window.innerWidth,
+        height: container ? container.clientHeight : window.innerHeight
+      });
+    };
+
+    handleResize();
+
+    // ResizeObserver para detectar cambios en el tamaño real del contenedor del mapa
+    let resizeObserver;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(handleResize);
+      resizeObserver.observe(containerRef.current);
+    }
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
+    };
+  }, []);
+
+  // Auto-escalado inteligente: en móvil aplica zoom 1.8x y centra el plano
+  // vertical y horizontalmente para que ocupe toda la pantalla.
+  const applyAutoScale = () => {
+    const w = containerSize.width || window.innerWidth;
+    const h = containerSize.height || window.innerHeight;
+    if (!w || !h) return;
+    setZoom(MOBILE_ZOOM);
+    setOffset({
+      x: (w - MAP_WIDTH * MOBILE_ZOOM) / 2,
+      y: (h - MAP_HEIGHT * MOBILE_ZOOM) / 2
+    });
+  };
+
+  // Re-centrar automáticamente al cambiar el tamaño de pantalla en móvil
+  useEffect(() => {
+    if (isMobile) {
+      applyAutoScale();
+    } else {
+      setZoom(0.95);
+      setOffset({ x: 10, y: 15 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobile, containerSize]);
+
   // Ajustar el mapa al cambiar de piso
   useEffect(() => {
     resetView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeFloor]);
 
   // Controles de zoom
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.15, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.15, 0.6));
   const resetView = () => {
-    setZoom(0.95);
-    setOffset({ x: 10, y: 15 });
+    if (isMobile) {
+      applyAutoScale();
+    } else {
+      setZoom(0.95);
+      setOffset({ x: 10, y: 15 });
+    }
   };
 
   // Manejo de paneo (arrastre) con ratón o gestos táctiles
@@ -49,6 +119,27 @@ export default function MapViewer({
   };
 
   const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  // Manejo de paneo táctil para móviles (deslizar con el dedo)
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    setIsDragging(true);
+    setDragStart({ x: touch.clientX - offset.x, y: touch.clientY - offset.y });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const touch = e.touches[0];
+    setOffset({
+      x: touch.clientX - dragStart.x,
+      y: touch.clientY - dragStart.y
+    });
+  };
+
+  const handleTouchEnd = () => {
     setIsDragging(false);
   };
 
@@ -197,6 +288,9 @@ export default function MapViewer({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       style={{ overflow: 'hidden', touchAction: 'none' }}
     >
       {/* Botones de control del mapa */}
@@ -282,18 +376,30 @@ export default function MapViewer({
                 </defs>
 
                 {/* Nombre recortado dentro del cuadro de la habitación */}
-                <text
-                  x={room.x + room.w / 2}
-                  y={room.y + 14}
-                  className="room-text"
-                  clipPath={`url(#clip-${room.id})`}
-                  style={{ fontSize: 9 }}
-                >
-                  {room.name}
-                </text>
-                <text x={room.x + room.w / 2} y={room.y + room.h / 2 + 10} className="room-text-sub">
-                  {room.code}
-                </text>
+                {(() => {
+                  const isSmallRoom = room.w < 60;
+                  return (
+                    <>
+                      <text
+                        x={room.x + room.w / 2}
+                        y={room.y + room.h / 2 - 2}
+                        className="room-text"
+                        clipPath={`url(#clip-${room.id})`}
+                        style={{ fontSize: isSmallRoom ? '7.5px' : '9px' }}
+                      >
+                        {room.shortName || room.name}
+                      </text>
+                      <text 
+                        x={room.x + room.w / 2} 
+                        y={room.y + room.h / 2 + 8} 
+                        className="room-text-sub"
+                        style={{ fontSize: isSmallRoom ? '6.5px' : '8px' }}
+                      >
+                        {room.code}
+                      </text>
+                    </>
+                  );
+                })()}
               </g>
             );
           })}

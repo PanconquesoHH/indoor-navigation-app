@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Compass, Sun, Moon } from 'lucide-react';
+import { Compass, Sun, Moon, Radar } from 'lucide-react';
 import MapViewer from './MapViewer';
 import SearchPanel from './SearchPanel';
 import BottomSheet from './BottomSheet';
 import SimulatorControls from './SimulatorControls';
-import { floors, rooms, graphNodes, roomToNodeMap } from '../data/buildingData';
+import { floors, rooms, graphNodes, roomToNodeMap, graphEdges } from '../data/buildingData';
 import { findShortestPath } from '../utils/pathfinding';
 import GpsLocationController from './GpsLocationController';
 
@@ -125,7 +125,7 @@ export default function IndoorNavigator() {
     }
   };
 
-  const handleGpsUpdate = ({ floor, entryName, internalX, internalY }) => {
+  const handleGpsUpdate = ({ floor, entryName, internalX, internalY, isRelative }) => {
     const anchor = {
       PB: { x: 940, y: 360 },
       '1': { x: 790, y: 290 },
@@ -133,18 +133,22 @@ export default function IndoorNavigator() {
       '3': { x: 490, y: 245 },
     };
 
-    const a = anchor[floor] || anchor.PB;
+    const actualFloor = isRelative ? activeFloor : floor;
+    const a = anchor[actualFloor] || anchor.PB;
 
     const newUserLoc = {
       id: 'user_gps',
       name: entryName || 'Mi Ubicación',
-      floor,
+      floor: actualFloor,
       x: internalX ?? a.x,
       y: internalY ?? a.y,
     };
 
     setUserLocation(newUserLoc);
-    setActiveFloor(floor);
+    if (!isRelative) {
+      setActiveFloor(actualFloor);
+    }
+    setGpsStatus(isRelative ? 'GPS Relativo (Demo)' : 'GPS Conectado');
 
     if (routeInfo) {
       const destRoom = rooms.find(r => r.id === routeInfo.targetRoomId);
@@ -182,6 +186,19 @@ export default function IndoorNavigator() {
     setRouteInfo(null);
   };
 
+  // Lógica para detectar si el usuario está parado en una escalera y puede cambiar de piso
+  const nearestNodeForStairs = findNearestNode(userLocation.x, userLocation.y, userLocation.floor);
+  const isOnStairs = nearestNodeForStairs && nearestNodeForStairs.isStairs &&
+    Math.sqrt(Math.pow(nearestNodeForStairs.x - userLocation.x, 2) + Math.pow(nearestNodeForStairs.y - userLocation.y, 2)) < 35;
+
+  // Encontrar conexiones verticales en el grafo
+  const verticalConnections = isOnStairs ? graphEdges.filter(edge => 
+    edge.isVertical && (edge.from === nearestNodeForStairs.id || edge.to === nearestNodeForStairs.id)
+  ).map(edge => {
+    const neighborId = edge.from === nearestNodeForStairs.id ? edge.to : edge.from;
+    return graphNodes[neighborId];
+  }) : [];
+
   return (
     <div className="app-container">
       <MapViewer
@@ -210,11 +227,23 @@ export default function IndoorNavigator() {
               <Compass size={18} style={{ color: 'var(--brand-primary)' }} />
               Turismo USFX
             </h1>
-            <span style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>Mapa de Localización e Interiores</span>
+            <span className={`gps-status-subtitle ${gpsEnabled ? 'gps-status-active' : ''}`}>
+              {gpsStatus}
+            </span>
           </div>
-          <button className="glass-btn" onClick={toggleTheme} style={{ width: '32px', height: '32px', borderRadius: '8px' }} title="Cambiar tema">
-            {isLightTheme ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              className={`glass-btn gps-radar-btn ${gpsEnabled ? 'gps-radar-active' : ''}`}
+              onClick={() => setGpsEnabled(v => !v)}
+              style={{ width: '32px', height: '32px', borderRadius: '8px' }}
+              title={gpsEnabled ? 'Desactivar GPS' : 'Activar GPS'}
+            >
+              <Radar size={16} className={gpsEnabled ? 'gps-radar-icon' : ''} />
+            </button>
+            <button className="glass-btn" onClick={toggleTheme} style={{ width: '32px', height: '32px', borderRadius: '8px' }} title="Cambiar tema">
+              {isLightTheme ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+          </div>
         </div>
 
         <SearchPanel
@@ -254,25 +283,34 @@ export default function IndoorNavigator() {
         userLocation={userLocation}
       />
 
+      {isOnStairs && verticalConnections.length > 0 && (
+        <div className="stairs-transition-panel">
+          <span className="stairs-panel-title">🚪 Transición de Piso</span>
+          <div className="stairs-panel-buttons">
+            {verticalConnections.map(targetNode => {
+              const currentFloorNum = activeFloor === 'PB' ? 0 : parseInt(activeFloor);
+              const targetFloorNum = targetNode.floor === 'PB' ? 0 : parseInt(targetNode.floor);
+              const isUp = targetFloorNum > currentFloorNum;
+              return (
+                <button
+                  key={targetNode.id}
+                  className="glass-btn stairs-action-btn"
+                  onClick={() => handleTeleport(targetNode)}
+                  style={{ gap: '4px', cursor: 'pointer' }}
+                >
+                  <span>{isUp ? '▲ Subir al' : '▼ Bajar al'} {targetNode.floor === 'PB' ? 'Piso PB' : `${targetNode.floor}º Piso`}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <SimulatorControls
         userLocation={userLocation}
         onTeleport={handleTeleport}
         onWalk={handleWalk}
       />
-
-      <div style={{ position: 'absolute', right: 16, top: 16, zIndex: 20, display: 'flex', gap: 10, pointerEvents: 'auto' }}>
-        <button
-          className="glass-btn"
-          onClick={() => setGpsEnabled(v => !v)}
-          style={{ width: 52, height: 52, borderRadius: 14, background: gpsEnabled ? 'rgba(16,185,129,0.15)' : undefined, borderColor: gpsEnabled ? 'rgba(16,185,129,0.35)' : undefined }}
-          title="Activar GPS"
-        >
-          GPS
-        </button>
-        <div style={{ alignSelf: 'center', padding: '0 10px', background: 'rgba(0,0,0,0.12)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, fontSize: 11, color: 'var(--text-secondary)', maxWidth: 170, lineHeight: 1.2 }}>
-          {gpsStatus}
-        </div>
-      </div>
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigation, Compass, MapPin, X, ArrowUpRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Navigation, Compass, MapPin, X, ArrowUpRight, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function BottomSheet({ 
   selectedRoom, 
@@ -9,12 +9,20 @@ export default function BottomSheet({
   onClose,
   userLocation 
 }) {
+  const [isMinimized, setIsMinimized] = useState(false);
+
+  useEffect(() => {
+    if (routeInfo) {
+      setIsMinimized(false);
+    }
+  }, [routeInfo]);
+
   const isOpen = !!selectedRoom || !!routeInfo;
 
   if (!isOpen) return null;
 
   return (
-    <div className={`bottom-sheet ${isOpen ? 'open' : ''}`}>
+    <div className={`bottom-sheet ${isOpen ? 'open' : ''} ${isMinimized ? 'minimized' : ''}`}>
       <div className="sheet-handle-bar"></div>
       
       <div className="sheet-content">
@@ -28,43 +36,62 @@ export default function BottomSheet({
                   De: {routeInfo.startName} → A: {routeInfo.endName}
                 </p>
               </div>
-              <button className="action-btn-secondary" onClick={onCancelRoute}>
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="route-summary-box">
-              <div className="route-info-left">
-                <span className="route-info-title">Ruta óptima calculada</span>
-                <span className="route-info-meta">
-                  Distancia: {Math.round(routeInfo.distance * 0.1)} metros | A pie: ~ {Math.ceil(routeInfo.distance * 0.05)} seg.
-                </span>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <button 
+                  className="action-btn-secondary" 
+                  onClick={() => setIsMinimized(!isMinimized)}
+                  title={isMinimized ? "Expandir indicaciones" : "Minimizar indicaciones"}
+                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  {isMinimized ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                </button>
+                <button 
+                  className="action-btn-secondary" 
+                  onClick={onCancelRoute}
+                  title="Cancelar ruta"
+                  style={{ width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <X size={20} />
+                </button>
               </div>
-              <Navigation size={22} className="start-marker" style={{ stroke: 'none' }} />
             </div>
 
-            <div className="route-directions-list">
-              {routeInfo.instructions.map((step, index) => {
-                let stepClass = 'direction-step-item';
-                if (index === 0) stepClass += ' start';
-                else if (index === routeInfo.instructions.length - 1) stepClass += ' end';
-                else stepClass += ' active';
-
-                return (
-                  <div key={index} className={stepClass}>
-                    <div className="step-icon-circle"></div>
-                    <span className="step-text">{step}</span>
+            {!isMinimized && (
+              <>
+                <div className="route-summary-box">
+                  <div className="route-info-left">
+                    <span className="route-info-title">Ruta óptima calculada</span>
+                    <span className="route-info-meta">
+                      Distancia: {Math.round(routeInfo.distance * 0.1)} metros | A pie: ~ {Math.ceil(routeInfo.distance * 0.05)} seg.
+                    </span>
                   </div>
-                );
-              })}
-            </div>
+                  <Navigation size={22} className="start-marker" style={{ stroke: 'none' }} />
+                </div>
 
-            <div className="sheet-buttons-row" style={{ marginTop: '8px' }}>
-              <button className="action-btn-primary" onClick={onCancelRoute} style={{ background: 'var(--brand-danger)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
-                <X size={18} />
-                <span>Cancelar Ruta</span>
-              </button>
-            </div>
+                <div className="route-directions-list">
+                  {routeInfo.instructions.map((step, index) => {
+                    let stepClass = 'direction-step-item';
+                    if (index === 0) stepClass += ' start';
+                    else if (index === routeInfo.instructions.length - 1) stepClass += ' end';
+                    else stepClass += ' active';
+
+                    return (
+                      <div key={index} className={stepClass}>
+                        <div className="step-icon-circle"></div>
+                        <span className="step-text">{step}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div className="sheet-buttons-row" style={{ marginTop: '8px' }}>
+                  <button className="action-btn-primary" onClick={onCancelRoute} style={{ background: 'var(--brand-danger)', boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)' }}>
+                    <X size={18} />
+                    <span>Cancelar Ruta</span>
+                  </button>
+                </div>
+              </>
+            )}
           </>
         ) : (
           /* CASO B: DETALLE DE HABITACIÓN SELECCIONADA */

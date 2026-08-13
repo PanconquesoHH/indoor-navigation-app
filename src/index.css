@@ -1002,6 +1002,11 @@ body.light-theme .route-directions-list::before {
     transform: translateX(0);
   }
 
+  .bottom-sheet.minimized {
+    top: auto;
+    height: auto;
+  }
+
   .sheet-handle-bar {
     display: none;
   }

@@ -254,7 +254,7 @@ export default function IndoorNavigator() {
         />
       </div>
 
-      <div className="floating-controls-right" style={{ top: '35%' }}>
+      <div className="floating-controls-left">
         <div className="floor-selector-pill">
           {floors.slice().reverse().map(floor => (
             <button

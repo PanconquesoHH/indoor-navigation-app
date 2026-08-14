@@ -10,7 +10,7 @@ const MAP_HEIGHT = 480;
 const MOBILE_BREAKPOINT = 768;
 
 // Zoom óptimo para móviles (auto-escalado inteligente)
-const MOBILE_ZOOM = 1.8;
+const MOBILE_ZOOM = 1.55;
 
 export default function MapViewer({ 
   activeFloor, 
@@ -371,32 +371,60 @@ export default function MapViewer({
                 />
                 <defs>
                   <clipPath id={`clip-${room.id}`}>
-                    <rect x={room.x} y={room.y} width={room.w} height={room.h} rx="6" />
+                    <rect 
+                      x={room.x + 2} 
+                      y={room.y + 2} 
+                      width={room.w - 4} 
+                      height={room.h - 4} 
+                      rx="5" 
+                    />
                   </clipPath>
                 </defs>
 
                 {/* Nombre recortado dentro del cuadro de la habitación */}
                 {(() => {
-                  const isSmallRoom = room.w < 60;
+                  const isTinyRoom = room.w < 45 || room.h < 45;
+                  const isSmallRoom = room.w < 60 || room.h < 65;
+                  
+                  // En móvil reducir aún más los tamaños para evitar solapamiento con pasillos
+                  const mainSize = isMobile
+                    ? (isTinyRoom ? '5.8px' : isSmallRoom ? '6.8px' : '8px')
+                    : (isSmallRoom ? '7.5px' : '9px');
+                  
+                  const subSize = isMobile
+                    ? (isTinyRoom ? '0px' : isSmallRoom ? '5.2px' : '6.5px')
+                    : (isSmallRoom ? '6.5px' : '8px');
+                  
+                  const showSub = subSize !== '0px' && !isTinyRoom;
+                  
+                  const mainY = showSub
+                    ? room.y + room.h / 2 - (isMobile ? 1 : 2)
+                    : room.y + room.h / 2 + 1;
+                  
+                  const subY = room.y + room.h / 2 + (isMobile ? 7 : 8);
+                  
                   return (
                     <>
                       <text
                         x={room.x + room.w / 2}
-                        y={room.y + room.h / 2 - 2}
+                        y={mainY}
                         className="room-text"
                         clipPath={`url(#clip-${room.id})`}
-                        style={{ fontSize: isSmallRoom ? '7.5px' : '9px' }}
+                        style={{ fontSize: mainSize }}
                       >
                         {room.shortName || room.name}
                       </text>
-                      <text 
-                        x={room.x + room.w / 2} 
-                        y={room.y + room.h / 2 + 8} 
-                        className="room-text-sub"
-                        style={{ fontSize: isSmallRoom ? '6.5px' : '8px' }}
-                      >
-                        {room.code}
-                      </text>
+                      {showSub && (
+                        <text 
+                          x={room.x + room.w / 2} 
+                          y={subY} 
+                          className="room-text-sub"
+                          clipPath={`url(#clip-${room.id})`}
+                          style={{ fontSize: subSize }}
+                        >
+                          {room.code}
+                        </text>
+                      )}
                     </>
                   );
                 })()}

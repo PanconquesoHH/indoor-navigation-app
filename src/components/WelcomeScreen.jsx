@@ -20,6 +20,7 @@ export default function WelcomeScreen({ onStart }) {
               src={escudoTurismo}
               alt="Escudo de la Carrera de Turismo USFX"
               className="welcome-screen__escudo"
+              
             />
           </div>
 

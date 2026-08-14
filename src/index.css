@@ -1112,29 +1112,31 @@ body.light-theme .route-directions-list::before {
 }
 
 .welcome-screen__escudo-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: min(150px, 42vw);
-  aspect-ratio: 1;
-  padding: 4px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.96);
-  border: 3px solid rgba(255, 255, 255, 0.85);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.28),
-    0 0 0 6px rgba(255, 255, 255, 0.08);
-  margin: 0 auto;
-  flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    aspect-ratio: 1;
+    padding: 0;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 3px solid rgba(255, 255, 255, 0.85);
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.28),
+        0 0 0 6px rgba(255, 255, 255, 0.08);
+    margin: 0 auto;
+    flex-shrink: 0;
 }
 
+
 .welcome-screen__escudo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  display: block;
-  border-radius: 14px;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    border-radius: 14px;
+    transform: translateY(5px);
 }
 
 .welcome-screen__text {
@@ -1235,14 +1237,14 @@ body.light-theme .route-directions-list::before {
   }
 
   .welcome-screen__card {
-    padding: 48px 40px 40px;
+    padding: 48px 40px 30px;
     gap: 32px;
   }
 
   .welcome-screen__escudo-wrap {
     width: 180px;
-    padding: 6px;
-    border-radius: 22px;
+    padding: 0px;
+    border-radius: 20px;
   }
 
   .welcome-screen__text {

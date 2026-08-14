@@ -116,7 +116,7 @@ export const rooms = [
     description: 'Servicio de fotocopias, impresiones y anillados.',
     details: 'Venta de material de avance, apuntes de materias y papelería general.',
     tags: ['fotocopias', 'fotocopiadora', 'impresiones', 'apuntes', 'anillados'],
-    x: 760, y: 200, w: 60, h: 40, door: { x: 760, y: 220 }
+    x: 760, y: 175, w: 60, h: 40, door: { x: 790, y: 215 }
   },
   {
     id: 'baño_mujeres_pb',
@@ -152,7 +152,7 @@ export const rooms = [
     description: 'Entrada principal al edificio sobre la acera Francisco Xavier de Chuquisaca.',
     details: 'Acceso peatonal principal.',
     tags: ['ingreso', 'entrada', 'calle', 'acera', 'salida', 'puerta'],
-    x: 940, y: 320, w: 50, h: 80, door: { x: 940, y: 360 }
+    x: 920, y: 280, w: 60, h: 90, door: { x: 920, y: 325 }
   },
   {
     id: 'vestibulo',
@@ -164,7 +164,7 @@ export const rooms = [
     description: 'Área de distribución de la entrada principal del edificio.',
     details: 'Conecta al auditorio, la fotocopiadora, la escalera derecha y el pasillo principal.',
     tags: ['vestibulo', 'hall', 'entrada', 'recepcion'],
-    x: 740, y: 240, w: 100, h: 100, door: { x: 790, y: 290 }
+    x: 760, y: 275, w: 110, h: 115, door: { x: 815, y: 332 }
   },
   {
     id: 'area_sin_designar_pb',
@@ -200,7 +200,7 @@ export const rooms = [
     description: 'Escalera del ala derecha del edificio (Vestíbulo).',
     details: 'Conecta los niveles: Planta Baja, 1º Piso y 2º Piso.',
     tags: ['escalera', 'subir', 'bajar', 'gradas', 'derecha', 'a4'],
-    x: 640, y: 260, w: 70, h: 80, door: { x: 675, y: 300 }
+    x: 640, y: 275, w: 70, h: 90, door: { x: 675, y: 320 }
   },
 
   // PRIMER PISO
@@ -380,7 +380,7 @@ export const rooms = [
     category: 'escalera',
     description: 'Conexión vertical - Ala Derecha.',
     tags: ['escalera', 'subir', 'bajar', 'gradas', 'derecha', 'a9'],
-    x: 640, y: 260, w: 70, h: 80, door: { x: 675, y: 300 }
+    x: 640, y: 275, w: 70, h: 90, door: { x: 675, y: 320 }
   },
 
   // SEGUNDO PISO
@@ -529,7 +529,7 @@ export const rooms = [
     floor: '2',
     category: 'escalera',
     tags: ['escalera', 'subir', 'bajar', 'gradas', 'derecha', 'a4'],
-    x: 640, y: 260, w: 70, h: 80, door: { x: 675, y: 300 }
+    x: 640, y: 275, w: 70, h: 90, door: { x: 675, y: 320 }
   },
 
   // TERCER PISO
@@ -610,12 +610,12 @@ export const rooms = [
 // Conectan puertas de habitaciones, escaleras y puntos intermedios en los pasillos (corridors)
 export const graphNodes = {
   // PLANTA BAJA
-  'pb_ingreso_principal': { id: 'pb_ingreso_principal', name: 'Ingreso Principal', floor: 'PB', x: 940, y: 360 },
-  'pb_vestibulo': { id: 'pb_vestibulo', name: 'Vestíbulo', floor: 'PB', x: 790, y: 290 },
+  'pb_ingreso_principal': { id: 'pb_ingreso_principal', name: 'Ingreso Principal', floor: 'PB', x: 920, y: 325 },
+  'pb_vestibulo': { id: 'pb_vestibulo', name: 'Vestíbulo', floor: 'PB', x: 815, y: 332 },
   'pb_auditorio_door': { id: 'pb_auditorio_door', name: 'Puerta Auditorio', floor: 'PB', x: 860, y: 180 },
   'pb_cabina_control_door': { id: 'pb_cabina_control_door', name: 'Puerta Cabina Control', floor: 'PB', x: 810, y: 120 },
-  'pb_fotocopias_door': { id: 'pb_fotocopias_door', name: 'Puerta Fotocopiadora', floor: 'PB', x: 760, y: 220 },
-  'pb_escalera_der_node': { id: 'pb_escalera_der_node', name: 'Escalera Derecha (Piso PB)', floor: 'PB', x: 675, y: 300, isStairs: true, pairId: 'p1_escalera_der_node' },
+  'pb_fotocopias_door': { id: 'pb_fotocopias_door', name: 'Puerta Fotocopiadora', floor: 'PB', x: 790, y: 215 },
+  'pb_escalera_der_node': { id: 'pb_escalera_der_node', name: 'Escalera Derecha (Piso PB)', floor: 'PB', x: 675, y: 320, isStairs: true, pairId: 'p1_escalera_der_node' },
   'pb_sala_docente_door': { id: 'pb_sala_docente_door', name: 'Puerta Sala Docente', floor: 'PB', x: 720, y: 200 },
   'pb_control_biometrico_door': { id: 'pb_control_biometrico_door', name: 'Puerta Biométrico', floor: 'PB', x: 615, y: 180 },
   'pb_baño_mujeres_door': { id: 'pb_baño_mujeres_door', name: 'Puerta Baño Mujeres', floor: 'PB', x: 522, y: 140 },
@@ -649,7 +649,7 @@ export const graphNodes = {
   'p1_secretaria_door': { id: 'p1_secretaria_door', name: 'Puerta Secretaría', floor: '1', x: 740, y: 170 },
   'p1_kardex_door': { id: 'p1_kardex_door', name: 'Puerta Kardex', floor: '1', x: 770, y: 140 },
   'p1_biblioteca_door': { id: 'p1_biblioteca_door', name: 'Puerta Biblioteca', floor: '1', x: 820, y: 180 },
-  'p1_escalera_der_node': { id: 'p1_escalera_der_node', name: 'Escalera Derecha (Piso 1)', floor: '1', x: 675, y: 300, isStairs: true, pairId: 'pb_escalera_der_node', upPairId: 'p2_escalera_der_node' },
+  'p1_escalera_der_node': { id: 'p1_escalera_der_node', name: 'Escalera Derecha (Piso 1)', floor: '1', x: 675, y: 320, isStairs: true, pairId: 'pb_escalera_der_node', upPairId: 'p2_escalera_der_node' },
   'p1_gabinete_informatica_door': { id: 'p1_gabinete_informatica_door', name: 'Puerta Gabinete Informática', floor: '1', x: 750, y: 300 },
   // Nodos pasillos primer piso
   'p1_pasillo_1': { id: 'p1_pasillo_1', name: 'Pasillo Izquierda', floor: '1', x: 170, y: 245 },
@@ -672,7 +672,7 @@ export const graphNodes = {
   'p2_deposito_3_door': { id: 'p2_deposito_3_door', name: 'Puerta Depósito 3', floor: '2', x: 655, y: 140 },
   'p2_area_sin_designar_door': { id: 'p2_area_sin_designar_door', name: 'Puerta Área sin Designar', floor: '2', x: 740, y: 200 },
   'p2_terraza_door': { id: 'p2_terraza_door', name: 'Puerta Terraza', floor: '2', x: 870, y: 240 },
-  'p2_escalera_der_node': { id: 'p2_escalera_der_node', name: 'Escalera Derecha (Piso 2)', floor: '2', x: 675, y: 300, isStairs: true, pairId: 'p1_escalera_der_node' },
+  'p2_escalera_der_node': { id: 'p2_escalera_der_node', name: 'Escalera Derecha (Piso 2)', floor: '2', x: 675, y: 320, isStairs: true, pairId: 'p1_escalera_der_node' },
   // Nodos pasillos segundo piso
   'p2_pasillo_1': { id: 'p2_pasillo_1', name: 'Pasillo Izquierda', floor: '2', x: 170, y: 245 },
   'p2_pasillo_2': { id: 'p2_pasillo_2', name: 'Pasillo Centro-Izquierda', floor: '2', x: 285, y: 245 },
@@ -721,13 +721,13 @@ export const graphEdges = [
   { from: 'pb_pasillo_4', to: 'pb_patio_principal', weight: 110 },
 
   { from: 'pb_pasillo_5', to: 'pb_sala_docente_door', weight: 45 },
-  { from: 'pb_pasillo_5', to: 'pb_escalera_der_node', weight: 55 },
+  { from: 'pb_pasillo_5', to: 'pb_escalera_der_node', weight: 78 },
 
-  { from: 'pb_pasillo_6', to: 'pb_vestibulo', weight: 45 },
-  { from: 'pb_vestibulo', to: 'pb_fotocopias_door', weight: 75 },
-  { from: 'pb_vestibulo', to: 'pb_auditorio_door', weight: 130 },
-  { from: 'pb_vestibulo', to: 'pb_cabina_control_door', weight: 170 },
-  { from: 'pb_vestibulo', to: 'pb_ingreso_principal', weight: 160 },
+  { from: 'pb_pasillo_6', to: 'pb_vestibulo', weight: 92 },
+  { from: 'pb_vestibulo', to: 'pb_fotocopias_door', weight: 120 },
+  { from: 'pb_vestibulo', to: 'pb_auditorio_door', weight: 160 },
+  { from: 'pb_vestibulo', to: 'pb_cabina_control_door', weight: 212 },
+  { from: 'pb_vestibulo', to: 'pb_ingreso_principal', weight: 105 },
 
   // --- CONEXIONES PRIMER PISO ---
   // Pasillo central horizontal
@@ -752,7 +752,7 @@ export const graphEdges = [
   { from: 'p1_pasillo_4', to: 'p1_deposito_1_door', weight: 105 },
 
   { from: 'p1_pasillo_5', to: 'p1_direccion_door', weight: 45 },
-  { from: 'p1_pasillo_5', to: 'p1_escalera_der_node', weight: 55 },
+  { from: 'p1_pasillo_5', to: 'p1_escalera_der_node', weight: 78 },
 
   { from: 'p1_pasillo_6', to: 'p1_secretaria_door', weight: 90 },
   { from: 'p1_pasillo_6', to: 'p1_kardex_door', weight: 110 },
@@ -783,7 +783,7 @@ export const graphEdges = [
   { from: 'p2_pasillo_4', to: 'p2_deposito_3_door', weight: 105 },
 
   { from: 'p2_pasillo_5', to: 'p2_area_sin_designar_door', weight: 85 },
-  { from: 'p2_pasillo_5', to: 'p2_escalera_der_node', weight: 55 },
+  { from: 'p2_pasillo_5', to: 'p2_escalera_der_node', weight: 78 },
 
   { from: 'p2_pasillo_6', to: 'p2_terraza_door', weight: 80 },
 

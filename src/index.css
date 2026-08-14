@@ -1115,10 +1115,10 @@ body.light-theme .route-directions-list::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: min(180px, 50vw);
+  width: min(150px, 42vw);
   aspect-ratio: 1;
-  padding: 16px;
-  border-radius: 24px;
+  padding: 4px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.96);
   border: 3px solid rgba(255, 255, 255, 0.85);
   box-shadow:
@@ -1131,8 +1131,10 @@ body.light-theme .route-directions-list::before {
 .welcome-screen__escudo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
+  object-position: center;
   display: block;
+  border-radius: 14px;
 }
 
 .welcome-screen__text {
@@ -1238,9 +1240,9 @@ body.light-theme .route-directions-list::before {
   }
 
   .welcome-screen__escudo-wrap {
-    width: 220px;
-    padding: 20px;
-    border-radius: 28px;
+    width: 180px;
+    padding: 6px;
+    border-radius: 22px;
   }
 
   .welcome-screen__text {

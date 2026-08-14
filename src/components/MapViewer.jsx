@@ -253,7 +253,7 @@ export default function MapViewer({
             <rect x="150" y="225" width="670" height="35" rx="6" className="svg-corridor" />
             {/* Rama de conexión vertical al vestíbulo (sólo PB) */}
             {activeFloor === 'PB' && (
-              <rect x="740" y="240" width="80" height="40" className="svg-corridor" />
+              <rect x="770" y="258" width="50" height="22" className="svg-corridor" />
             )}
           </>
         );
